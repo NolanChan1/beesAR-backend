@@ -1,4 +1,5 @@
 ## Contributors
 
-- Nolan Chan
 - Abhishek Balasubramanian
+- Nolan Chan
+- Dylan Windsor
