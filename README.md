@@ -13,3 +13,4 @@ Run `npm run dev` for a dev server. Navigate to `http://localhost:5000/`. The we
 - Braeden King
 - Dylan Windsor
 - Hao Nguyen
+- Rubaiyet Meem
