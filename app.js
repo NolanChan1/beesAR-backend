@@ -1,8 +1,12 @@
 const express = require("express");
 const path = require("path");
 const logger = require("./middleware/logger");
+const connectDB = require("./config/db")
 
 const app = express();
+
+// Set connection to db
+connectDB.connectToServer();
 
 // Init middleware
 app.use(logger);
@@ -14,8 +18,8 @@ app.use(express.urlencoded({ extended: false }));
 // Set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Data API Routes
-app.use("/api/data", require("./routes/api/data"));
+// Product API Routes
+app.use("/api/products", require("./routes/api/products"));
 
 const PORT = process.env.PORT || 5000;
 
