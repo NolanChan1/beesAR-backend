@@ -21,6 +21,9 @@ app.use(express.static(path.join(__dirname, "public")));
 // Product API Routes
 app.use("/api/products", require("./routes/api/products"));
 
+// Catagories API Routes
+app.use("/api/catagories", require("./routes/api/catagories"))
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

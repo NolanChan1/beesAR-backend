@@ -1,11 +1,10 @@
 const { query } = require("express");
 const asyncHandler = require("express-async-handler");
-const db = require("../config/db");
 const dbconn = require("../config/db");
 var ObjectId = require("mongodb").ObjectId;
 
 // @desc    Gets all products
-// @route   GET /api/goals
+// @route   GET /api/products
 // @access  Private
 const getProducts = asyncHandler(async (req, res) => {
   const dbConnect = dbconn.getDb();
@@ -22,13 +21,17 @@ const getProducts = asyncHandler(async (req, res) => {
     });
 });
 
-const getProductFromID = asyncHandler(async (req, res) => {
+// @desc    Gets a product from a given product ID
+// @route   GET /api/pruducts/:id
+// @access  Private
+const getProductFromSKU = asyncHandler(async (req, res) => {
   const dbConnect = dbconn.getDb();
   try {
-    var query = { _id: new ObjectId(req.params.id) };
+    var query = {sku : req.params.sku };
   } catch (error) {
     query = null;
     console.log(error);
+    res.status(500).send(`Error`);
   }
 
   dbConnect
@@ -38,12 +41,12 @@ const getProductFromID = asyncHandler(async (req, res) => {
       if (err) {
         res
           .status(500)
-          .send(`Error fetching product with id of ${req.params.id}`);
+          .send(`Error fetching product with SKU of ${req.params.sku}`);
       } else if (result.length != 1) {
         res
           .status(404)
-          .send(`Could not find product with id of ${req.params.id}`);
-      } else if (result[0]._id.toString() === req.params.id) {
+          .send(`Could not find product with SKU of ${req.params.sku}`);
+      } else if (result[0].sku == req.params.sku) {
         res.status(200).json(result);
       }
     });
@@ -51,5 +54,5 @@ const getProductFromID = asyncHandler(async (req, res) => {
 
 module.exports = {
   getProducts,
-  getProductFromID,
+  getProductFromSKU,
 };
