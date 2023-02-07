@@ -10,7 +10,7 @@ const getProducts = asyncHandler(async (req, res) => {
   const dbConnect = dbconn.getDb();
 
   dbConnect
-    .collection("products")
+    .collection("product_details")
     .find({})
     .toArray(function (err, result) {
       if (err) {
@@ -26,8 +26,9 @@ const getProducts = asyncHandler(async (req, res) => {
 // @access  Private
 const getProductFromSKU = asyncHandler(async (req, res) => {
   const dbConnect = dbconn.getDb();
+
   try {
-    var query = {sku : req.params.sku };
+    var query = { "Product_SKU" : parseInt(req.params.sku) };
   } catch (error) {
     query = null;
     console.log(error);
@@ -35,7 +36,7 @@ const getProductFromSKU = asyncHandler(async (req, res) => {
   }
 
   dbConnect
-    .collection("products")
+    .collection("product_details")
     .find(query)
     .toArray(function (err, result) {
       if (err) {
@@ -46,7 +47,7 @@ const getProductFromSKU = asyncHandler(async (req, res) => {
         res
           .status(404)
           .send(`Could not find product with SKU of ${req.params.sku}`);
-      } else if (result[0].sku == req.params.sku) {
+      } else if (result[0].Product_SKU == req.params.sku) {
         res.status(200).json(result);
       }
     });

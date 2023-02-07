@@ -24,8 +24,14 @@ app.use(express.static(path.join(__dirname, "public")));
 // Product API Routes
 app.use("/api/products", require("./routes/api/products"));
 
-// Catagories API Routes
-app.use("/api/catagories", require("./routes/api/catagories"))
+// Categories API Routes
+app.use("/api/categories", require("./routes/api/categories"));
+
+// Product image API Routes
+app.use("/api/productImages", require("./routes/api/productImage"));
+
+// GLTF file API Routes
+app.use("/api/gltf", require("./routes/api/gltf"));
 
 const PORT = process.env.PORT;
 
