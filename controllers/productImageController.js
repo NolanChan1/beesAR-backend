@@ -1,7 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const path = require("path");
 
-
 // @desc    Gets the product image of a given product
 // @route   GET /api/productImages/:file
 // @access  Private
