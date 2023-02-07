@@ -1,9 +1,12 @@
 const express = require("express");
+const dotenv = require("dotenv");
 const path = require("path");
 const logger = require("./middleware/logger");
 const connectDB = require("./config/db")
 
 const app = express();
+
+dotenv.config();
 
 // Set connection to db
 connectDB.connectToServer();
@@ -21,6 +24,10 @@ app.use(express.static(path.join(__dirname, "public")));
 // Product API Routes
 app.use("/api/products", require("./routes/api/products"));
 
-const PORT = process.env.PORT || 5000;
+// Catagories API Routes
+app.use("/api/catagories", require("./routes/api/catagories"))
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => console.log(`Server started on port ${process.env.PORT}`));
+
