@@ -30,3 +30,4 @@ app.use("/api/catagories", require("./routes/api/catagories"))
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => console.log(`Server started on port ${process.env.PORT}`));
+
