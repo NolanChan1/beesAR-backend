@@ -28,7 +28,7 @@ app.use("/api/products", require("./routes/api/products"));
 app.use("/api/categories", require("./routes/api/categories"));
 
 // Product image API Routes
-app.use("/api/productImages", require("./routes/api/productImage"));
+app.use("/api/product_images", require("./routes/api/productImage"));
 
 // GLTF file API Routes
 app.use("/api/gltf", require("./routes/api/gltf"));

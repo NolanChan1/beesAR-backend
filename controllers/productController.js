@@ -1,7 +1,6 @@
 const { query } = require("express");
 const asyncHandler = require("express-async-handler");
 const dbconn = require("../config/db");
-var ObjectId = require("mongodb").ObjectId;
 
 // @desc    Gets all products
 // @route   GET /api/products
