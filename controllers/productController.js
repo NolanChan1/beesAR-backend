@@ -1,6 +1,7 @@
 const { query } = require("express");
 const asyncHandler = require("express-async-handler");
 const dbconn = require("../config/db");
+const { toTitleCase } = require("../middleware/stringFormatters.js");
 
 // @desc    Gets all products
 // @route   GET /api/products
@@ -20,14 +21,14 @@ const getProducts = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Gets a product from a given product ID
-// @route   GET /api/pruducts/:id
+// @desc    Gets a product from a given product SKU
+// @route   GET /api/products/sku/:sku
 // @access  Private
 const getProductFromSKU = asyncHandler(async (req, res) => {
   const dbConnect = dbconn.getDb();
 
   try {
-    var query = { "Product_SKU" : parseInt(req.params.sku) };
+    var query = { Product_SKU: parseInt(req.params.sku) };
   } catch (error) {
     query = null;
     console.log(error);
@@ -52,7 +53,44 @@ const getProductFromSKU = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Gets a product from a given product name
+// @route   GET /api/products/name/:name
+// @access  Private
+const getProductFromName = asyncHandler(async (req, res) => {
+  const dbConnect = dbconn.getDb();
+
+  let formatted_name = toTitleCase(req.params.name);
+
+  try {
+    var query = { Name: { $regex: formatted_name } };
+  } catch (error) {
+    query = null;
+    console.log(error);
+    res.status(500).send(`Error`);
+  }
+
+  dbConnect
+    .collection("product_details")
+    .find(query)
+    .toArray(function (err, result) {
+      if (err) {
+        res
+          .status(500)
+          .send(`Error fetching product with the name ${formatted_name}`);
+      } else if (result.length === 0) {
+        res
+          .status(404)
+          .send(
+            `Could not find product containing \"${formatted_name}\" in the name`
+          );
+      } else {
+        res.status(200).json(result);
+      }
+    });
+});
+
 module.exports = {
   getProducts,
   getProductFromSKU,
+  getProductFromName,
 };

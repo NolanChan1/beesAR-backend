@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const logger = require("./middleware/logger");
-const connectDB = require("./config/db")
+const connectDB = require("./config/db");
 
 const app = express();
 
@@ -24,6 +24,9 @@ app.use(express.static(path.join(__dirname, "public")));
 // Product API Routes
 app.use("/api/products", require("./routes/api/products"));
 
+// Simplified Product Routes
+app.use("/api/simple_product", require("./routes/api/simpleProduct"));
+
 // Categories API Routes
 app.use("/api/categories", require("./routes/api/categories"));
 
@@ -35,5 +38,6 @@ app.use("/api/gltf", require("./routes/api/gltf"));
 
 const PORT = process.env.PORT;
 
-app.listen(PORT, () => console.log(`Server started on port ${process.env.PORT}`));
-
+app.listen(PORT, () =>
+  console.log(`Server started on port ${process.env.PORT}`)
+);
