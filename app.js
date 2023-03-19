@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const logger = require("./middleware/logger");
@@ -13,6 +14,7 @@ connectDB.connectToServer();
 
 // Init middleware
 app.use(logger);
+app.use(cors());
 
 // Body Parser Middleware
 app.use(express.json());

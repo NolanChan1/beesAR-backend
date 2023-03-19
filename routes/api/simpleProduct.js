@@ -10,7 +10,7 @@ const {
 router.get("/", getSimpleProduct);
 
 // Gets simplified product data from the SKU
-router.get("/:sku", getSimpleProductFromSKU);
+router.get("/sku/:sku", getSimpleProductFromSKU);
 
 // Gets simplified product data from the name
 router.get("/name/:name", getSimpleProductFromName);
