@@ -1,3 +1,5 @@
+// Middleware to change the formatting of filename to match the DB entries.
+
 function toTitleCase(to_split) {
   let split_str = to_split.toLowerCase().split(" ");
   let title_case_str = [];

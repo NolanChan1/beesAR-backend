@@ -5,11 +5,13 @@ const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { toTitleCase } = require("../middleware/stringFormatters");
 
+// Gets bucket info from env file
 const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
 const accessKey = process.env.ACCESS_KEY;
 const secretAccessKey = process.env.SECRET_ACCESS_KEY;
 
+// Creates an S3 client for retrieving data from bucket
 const s3 = new S3Client({
   credentials: {
     accessKeyId: accessKey,
@@ -18,13 +20,14 @@ const s3 = new S3Client({
   region: bucketRegion,
 });
 
-// @desc    Gets all products and sends it as a simplified JSON
+// @desc    Gets all products and sends it as a simplified JSON containing just SKU, Name and Image
 // @route   GET /api/simple_product
 // @access  Private
 const getSimpleProduct = asyncHandler(async (req, res) => {
-  const dbConnect = dbconn.getDb();
-  let toSend = [];
+  const dbConnect = dbconn.getDb(); // Gets DB connection
+  let toSend = []; // Array to hold products to send in response
 
+  // Create query for DB
   try {
     var query = {};
   } catch (error) {
@@ -33,6 +36,7 @@ const getSimpleProduct = asyncHandler(async (req, res) => {
     res.status(500).send(`Error`);
   }
 
+  // Fetch product data
   dbConnect
     .collection("product_details")
     .find(query)
@@ -42,6 +46,7 @@ const getSimpleProduct = asyncHandler(async (req, res) => {
       } else if (result.length === 0) {
         res.status(404).send(`Could not find products`);
       } else {
+        // Loop that gets each products image and adds it to a simplified JSON representing the product
         for (let product of result) {
           let filename =
             "product_images/" + product.Product_SKU.toString() + ".jpg";
@@ -54,6 +59,7 @@ const getSimpleProduct = asyncHandler(async (req, res) => {
           let command = new GetObjectCommand(getObjectParams);
           let url = await getSignedUrl(s3, command, { expiresIn: 300 });
 
+          // Add simplified product JSON to array to send
           toSend.push({
             Name: product.Name,
             Product_SKU: product.Product_SKU,
@@ -66,21 +72,23 @@ const getSimpleProduct = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Gets a product from a given product sku and sends it as a simplified JSON
+// @desc    Gets a product from a given product sku and sends it as a simplified JSON containing just SKU, Name and Image
 // @route   GET /api/simple_product/:sku
 // @access  Private
 const getSimpleProductFromSKU = asyncHandler(async (req, res) => {
-  const filename = "product_images/" + req.params.sku.toString() + ".jpg";
-  const dbConnect = dbconn.getDb();
+  const filename = "product_images/" + req.params.sku.toString() + ".jpg"; // Create filename for S3 request
+  const dbConnect = dbconn.getDb(); // Gets DB connection
 
+  // Create a bucket parameters object and populate with needed info
   const getObjectParams = {
     Bucket: bucketName,
     Key: filename,
   };
 
-  const command = new GetObjectCommand(getObjectParams);
-  const url = await getSignedUrl(s3, command, { expiresIn: 300 });
+  const command = new GetObjectCommand(getObjectParams); // Create command object to send request to S3 bucket
+  const url = await getSignedUrl(s3, command, { expiresIn: 300 }); // Get a presigned url for fetching data
 
+  // Create query for the product data
   try {
     var query = { Product_SKU: parseInt(req.params.sku) };
   } catch (error) {
@@ -89,6 +97,7 @@ const getSimpleProductFromSKU = asyncHandler(async (req, res) => {
     res.status(500).send(`Error`);
   }
 
+  // Get product info from DB then add the Image URL and send reponse
   dbConnect
     .collection("product_details")
     .find(query)
@@ -117,11 +126,12 @@ const getSimpleProductFromSKU = asyncHandler(async (req, res) => {
 // @route   GET /api/simple_product/:name
 // @access  Private
 const getSimpleProductFromName = asyncHandler(async (req, res) => {
-  const dbConnect = dbconn.getDb();
-  let toSend = [];
+  const dbConnect = dbconn.getDb(); // Gets DB connection
+  let toSend = []; // Array to hold products to send in response
 
-  let formatted_name = toTitleCase(req.params.name);
+  let formatted_name = toTitleCase(req.params.name); // Create the filename from the request
 
+  // Create query for the product data
   try {
     var query = { Name: { $regex: formatted_name } };
   } catch (error) {
@@ -130,6 +140,7 @@ const getSimpleProductFromName = asyncHandler(async (req, res) => {
     res.status(500).send(`Error`);
   }
 
+  // Get product info from DB then add the Image URL and send reponse
   dbConnect
     .collection("product_details")
     .find(query)
@@ -143,6 +154,7 @@ const getSimpleProductFromName = asyncHandler(async (req, res) => {
           .status(404)
           .send(`Could not find product with name of ${req.params.name}`);
       } else {
+        // Loop that gets each products image and adds it to a simplified JSON representing the product
         for (let product of result) {
           let filename =
             "product_images/" + product.Product_SKU.toString() + ".jpg";
@@ -155,6 +167,7 @@ const getSimpleProductFromName = asyncHandler(async (req, res) => {
           let command = new GetObjectCommand(getObjectParams);
           let url = await getSignedUrl(s3, command, { expiresIn: 300 });
 
+          // Add simplified product JSON to array to send
           toSend.push({
             Name: product.Name,
             Product_SKU: product.Product_SKU,
