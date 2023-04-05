@@ -1,3 +1,4 @@
+// Middleware that logs the request made and the IP it was made from
 const moment = require("moment");
 
 const logger = (req, res, next) => {

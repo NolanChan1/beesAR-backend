@@ -7,6 +7,7 @@ const connectDB = require("./config/db");
 
 const app = express();
 
+// Enable the env file
 dotenv.config();
 
 // Set connection to db
